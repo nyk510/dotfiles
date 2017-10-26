@@ -109,18 +109,40 @@ alias gip='curl ipcheck.ieserver.net'
 
 alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
 
-# 履歴検索
-# バックエンドに fzf を試用
-function select-history() {
-  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
-  CURSOR=$#BUFFER
-}
-
 zle -N select-history
 
 # use emacs key bind
 # for `control + A` or `control + E`
 bindkey -e
 
-# bind `control + r` to history functo
-bindkey '^r' select-history
+
+peco-select-history()
+{
+    # peco があるかないかで分岐する
+    # なければ違うアプローチをする
+    if type "peco" >/dev/null 2>&1; then
+        BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
+        CURSOR=${#BUFFER}
+
+        # peco で選んでる最中に Enter を押した瞬間実行する
+        zle accept-line
+        # 画面をクリアする
+        zle clear-screen
+    else
+        # バージョンによって条件分岐するために使用するモジュールを開放する
+        autoload -Uz is-at-least
+
+        # 4.3.9 以降ではインクリメンタルパターンサーチが出来るので、それを利用する
+        # なければデフォルトでマッピングされているものを利用する
+        if is-at-least 4.3.9; then
+            # zsh -la <widget> とすることで、widget に完全一致するウィジェットが
+            # 存在する場合、返却値 0 で終了する
+            zle -la history-incremental-pattern-search-backward && bindkey "^r" history-incremental-pattern-search-backward
+        else
+            history-incremental-search-backward
+        fi
+    fi
+}
+
+zle -N peco-select-history
+bindkey '^R' peco-select-history
