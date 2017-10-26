@@ -1,0 +1,23 @@
+[user]
+	name = nyker510
+	email = takamail53@gmail.com
+
+[alias]
+    st = status
+    ch = checkout
+    br = branch
+    cm = commit
+    ca = commit --amend
+    ft = fetch
+    pl = pull
+    ps = push
+
+    logline = log --oneline --stat --branches
+    hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+    tree = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)? %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
+    graph = log --graph -10 --branches --remotes --tags  --format=format:'%Cgreen%h %Creset? %<(75,trunc)%s (%cN, %ar) %Cred%d' --date-order
+    
+[color]
+	diff = auto
+	status = auto
+	branch = auto
