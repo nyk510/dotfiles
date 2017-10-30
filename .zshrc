@@ -19,7 +19,7 @@ setopt pushd_ignore_dups
 
 #lsの色付け
 export LSCOLORS=gxfxcxdxbxegedabagacad
-alias ls='ls -aG'
+alias ls='ls --color=auto'
 
 #かっこいい補完を導入する
 #source .zsh/plugin/incr*.zsh
@@ -77,5 +77,6 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 export PATH="$HOME/.seleniumdriver:$PATH"
 export PATH=$PATH:./node_modules/.bin
+export PATH=$PATH:$HOME/.PyCharm2017.2/bin
 
 eval "$(pyenv init -)"
