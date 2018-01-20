@@ -7,10 +7,11 @@ local DEFAULT=$'%{\e[1;m%}'
 # PROMPT=$'\n'$GREEN'%n '$YELLOW'%~ '$'\n'$DEFAULT'%(!.#.$) '
 PROMPT="[%n@%m %~]%(!.#.$) "
 export PATH=$PATH:~/peco_linux_amd64
+
 # 履歴
 HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
+HISTSIZE=1000000
+SAVEHIST=1000000
 setopt hist_ignore_dups
 setopt share_history
 setopt auto_pushd
@@ -72,11 +73,5 @@ peco-select-history()
 zle -N peco-select-history
 bindkey '^R' peco-select-history
 
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export PATH="$HOME/.seleniumdriver:$PATH"
-export PATH=$PATH:./node_modules/.bin
-export PATH=$PATH:$HOME/.PyCharm2017.2/bin
-
-eval "$(pyenv init -)"
+# 環境変数は .zshrc に記述せず .localrc に
+source ~/.localrc
