@@ -5,7 +5,9 @@ local BLUE=$'%{\e[1;34m%}'
 local DEFAULT=$'%{\e[1;m%}'
 
 # PROMPT=$'\n'$GREEN'%n '$YELLOW'%~ '$'\n'$DEFAULT'%(!.#.$) '
-PROMPT="[%n@%m %~]%(!.#.$) "
+PROMPT='[%n@%m %~]
+%(!.#.$) '
+
 export PATH=$PATH:~/peco_linux_amd64
 # 履歴
 HISTFILE=~/.zsh_history
@@ -19,7 +21,19 @@ setopt pushd_ignore_dups
 
 #lsの色付け
 export LSCOLORS=gxfxcxdxbxegedabagacad
-alias ls='ls --color=auto'
+
+case "${OSTYPE}" in
+darwin*)
+  alias ls="ls -G"
+  alias ll="ls -lG"
+  alias la="ls -laG"
+  ;;
+linux*)
+  alias ls='ls --color'
+  alias ll='ls -l --color'
+  alias la='ls -la --color'
+  ;;
+esac
 
 #かっこいい補完を導入する
 #source .zsh/plugin/incr*.zsh
@@ -71,6 +85,17 @@ peco-select-history()
 
 zle -N peco-select-history
 bindkey '^R' peco-select-history
+
+# git の状態を表示する
+autoload -Uz vcs_info
+setopt prompt_subst
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
+zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd () { vcs_info }
+RPROMPT=$RPROMPT'${vcs_info_msg_0_}'
 
 
 export PYENV_ROOT="$HOME/.pyenv"
