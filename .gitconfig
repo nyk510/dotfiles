@@ -18,6 +18,7 @@
     graph = log --graph -10 --branches --remotes --tags  --format=format:'%Cgreen%h %Creset? %<(75,trunc)%s (%cN, %ar) %Cred%d' --date-order
     
 [color]
+    ui = true
 	diff = auto
 	status = auto
 	branch = auto

@@ -88,20 +88,15 @@ zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 # git の状態を表示する
-autoload -Uz vcs_info
-setopt prompt_subst
-zstyle ':vcs_info:git:*' check-for-changes true
-zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
-zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
-zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
-zstyle ':vcs_info:*' actionformats '[%b|%a]'
-precmd () { vcs_info }
-RPROMPT=$RPROMPT'${vcs_info_msg_0_}'
+source ./.vcs_info_setting
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+# add path to local node modules bin
+export PATH=$PATH:./node_modules/.bin
 
 export PATH="$HOME/.seleniumdriver:$PATH"
 export PATH=$PATH:./node_modules/.bin
