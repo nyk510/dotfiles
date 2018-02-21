@@ -88,7 +88,7 @@ zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 # git の状態を表示する
-source ./.vcs_info_setting
+source ~/.vcs_info_setting
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
