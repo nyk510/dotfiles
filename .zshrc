@@ -1,106 +1,129 @@
-# プロンプト表示名
-local GREEN=$'%{\e[1;32m%}'
-local YELLOW=$'%{\e[1;33m%}'
-local BLUE=$'%{\e[1;34m%}'
-local DEFAULT=$'%{\e[1;m%}'
+export LANG=ja_JP.UTF-8
 
-# PROMPT=$'\n'$GREEN'%n '$YELLOW'%~ '$'\n'$DEFAULT'%(!.#.$) '
-PROMPT='[%n@%m %~]
-%(!.#.$) '
+# zplug settings:
+# --------------
 
-export PATH=$PATH:~/peco_linux_amd64
+export ZPLUG_HOME=~/.zplug
+source $ZPLUG_HOME/init.zsh
 
-# 履歴
-HISTFILE=~/.zsh_history
-HISTSIZE=1000000
-SAVEHIST=1000000
-setopt hist_ignore_dups
-setopt share_history
-setopt auto_pushd
-setopt pushd_ignore_dups
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
+# Additional completion definitions for Zsh
+zplug "zsh-users/zsh-completions"
+zplug "esc/conda-zsh-completion"
 
-#lsの色付け
-export LSCOLORS=gxfxcxdxbxegedabagacad
+# zsh-syntax-highlighting must be loaded after
+# excuting compinit command and sourcing other plugins.
+zplug "zsh-users/zsh-syntax-highlighting", defer:3
+zplug "zsh-users/zsh-history-substring-search", defer:3
 
-case "${OSTYPE}" in
-darwin*)
-  alias ls="ls -G"
-  alias ll="ls -lG"
-  alias la="ls -laG"
-  ;;
-linux*)
-  alias ls='ls --color'
-  alias ll='ls -l --color'
-  alias la='ls -la --color'
-  ;;
-esac
+# If this module is used in conjuncture with the syntax-highlighting module, it must be loaded after it.
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-syntax-highlighting", defer:3
 
-#かっこいい補完を導入する
-#source .zsh/plugin/incr*.zsh
-#大文字小文字の区別をなしにする
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# This ZSH plugin enhances the terminal environment with 256 colors.
+zplug "chrissicool/zsh-256color"
 
+zplug "plugins/git", from:oh-my-zsh
+zplug "modules/prompt", from:prezto
+zplug "modules/editor", from:prezto
+zplug "modules/history", from:prezto
 
-autoload history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
+# インタラクティブフィルタ
+zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
+zplug "junegunn/fzf", as:command, use:bin/fzf-tmux
 
-
-# 補完
-autoload -U compinit
-compinit
-zstyle ':completion:*' list-colors ''
-
-alias gsed='/usr/local/Cellar/gnu-sed/4.2.2/bin/gsed'
-
-peco-select-history()
-{
-    # peco があるかないかで分岐する
-    # なければ違うアプローチをする
-    if type "peco" >/dev/null 2>&1; then
-        BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
-        CURSOR=${#BUFFER}
-
-        # peco で選んでる最中に Enter を押した瞬間実行する
-        zle accept-line
-        # 画面をクリアする
-        zle clear-screen
-    else
-        # バージョンによって条件分岐するために使用するモジュールを開放する
-        autoload -Uz is-at-least
-
-        # 4.3.9 以降ではインクリメンタルパターンサーチが出来るので、それを利用する
-        # なければデフォルトでマッピングされているものを利用する
-        if is-at-least 4.3.9; then
-            # zsh -la <widget> とすることで、widget に完全一致するウィジェットが
-            # 存在する場合、返却値 0 で終了する
-            zle -la history-incremental-pattern-search-backward && bindkey "^r" history-incremental-pattern-search-backward
-        else
-            history-incremental-search-backward
-        fi
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
     fi
-}
+fi
 
-zle -N peco-select-history
-bindkey '^R' peco-select-history
+zplug load
 
-# git の状態を表示する
-source ~/.vcs_info_setting
+# zsh settings:
+# -----------------------
+
+setopt auto_list             # 補完候補が複数ある時に、一覧表示
+setopt auto_param_slash      # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
+setopt mark_dirs             # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
+setopt list_types            # 補完候補一覧でファイルの種別を識別マーク表示 (訳注:ls -F の記号)
+setopt auto_menu             # 補完キー連打で順に補完候補を自動で補完
+setopt auto_param_keys       # カッコの対応などを自動的に補完
+setopt magic_equal_subst     # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
+
+setopt complete_in_word      # 語の途中でもカーソル位置で補完
+setopt always_last_prompt    # カーソル位置は保持したままファイル名一覧を順次その場で表示
+
+setopt print_eight_bit
+setopt extended_glob
+setopt globdots
+zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*:matches' group 'yes'
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:options' auto-description '%d'
+zstyle ':completion:*:corrections' format ' %F{green}-- %d (errors: %e) --%f'
+zstyle ':completion:*:descriptions' format ' %F{yellow}-- %d --%f'
+zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*' format ' %F{yellow}-- %d --%f'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' verbose yes
+
+bindkey -v
+
+prompt pure
+
 
 # pyenv
+#
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-# add path to local node modules bin
-export PATH=$PATH:./node_modules/.bin
+alias activate="source $PYENV_ROOT/versions/miniconda3-latest/bin/activate"
+alias deactivate="source $PYENV_ROOT/versions/miniconda3-latest/bin/deactivate"
 
-export PATH="$HOME/.seleniumdriver:$PATH"
-export PATH=$PATH:./node_modules/.bin
-export PATH=$PATH:$HOME/.PyCharm2017.2/bin
+# coreutils, findutils
+# * uses for GNU like commands
+# * managed by homebrew
+export PATH=/usr/local/opt/coreutils/libexec/gnubin:${PATH}
+export PATH=/usr/local/opt/findutils/libexec/gnubin:${PATH}
+export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:${MANPATH}
+export MANPATH=/usr/local/opt/findutils/libexec/gnuman:${MANPATH}
 
-# 依存関係のある環境変数は .zshrc に記述せず .localrc に
-source ~/.localrc
+# Mac OS Xでpythonのlocationエラーが出るのを防止する
+export LC_ALL=$LANG
+
+# Visual Studio Code
+function vscode () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* }
+
+#---------------------------------------------------------------------------
+# Alias
+#---------------------------------------------------------------------------
+
+alias ls="ls --color=auto -G"
+alias ll='ls -ltr'
+alias la="ls -lhAF --color=auto"
+alias pd="pushd"
+alias po="popd"
+alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
+alias gip='curl ipcheck.ieserver.net'
+
+alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
+
+# 履歴検索
+# バックエンドに fzf を試用
+function select-history() {
+  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+  CURSOR=$#BUFFER
+}
+
+zle -N select-history
+bindkey -e
+
+bindkey '^r' select-history
+
