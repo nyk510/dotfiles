@@ -3,7 +3,7 @@ export LANG=ja_JP.UTF-8
 # zplug settings:
 # --------------
 
-export ZPLUG_HOME=~/.zplug
+export ZPLUG_HOME=/usr/local/opt/zplug
 source $ZPLUG_HOME/init.zsh
 
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
@@ -25,13 +25,15 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:3
 zplug "chrissicool/zsh-256color"
 
 zplug "plugins/git", from:oh-my-zsh
-zplug "modules/prompt", from:prezto
 zplug "modules/editor", from:prezto
 zplug "modules/history", from:prezto
 
 # インタラクティブフィルタ
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
 zplug "junegunn/fzf", as:command, use:bin/fzf-tmux
+
+# Use spaceship prompt: https://github.com/denysdovhan/spaceship-prompt
+zplug "denysdovhan/spaceship-prompt", use:spaceship.zsh, from:github, as:theme
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
@@ -40,7 +42,10 @@ if ! zplug check --verbose; then
     fi
 fi
 
+# zplug の読み込み
 zplug load
+alias gsed='/usr/local/Cellar/gnu-sed/4.2.2/bin/gsed'
+
 
 # zsh settings:
 # -----------------------
@@ -52,7 +57,6 @@ setopt list_types            # 補完候補一覧でファイルの種別を識�
 setopt auto_menu             # 補完キー連打で順に補完候補を自動で補完
 setopt auto_param_keys       # カッコの対応などを自動的に補完
 setopt magic_equal_subst     # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
-
 setopt complete_in_word      # 語の途中でもカーソル位置で補完
 setopt always_last_prompt    # カーソル位置は保持したままファイル名一覧を順次その場で表示
 
@@ -73,41 +77,23 @@ zstyle ':completion:*' format ' %F{yellow}-- %d --%f'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' verbose yes
 
-bindkey -v
-
-prompt pure
-
-
-# pyenv
-#
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-alias activate="source $PYENV_ROOT/versions/miniconda3-latest/bin/activate"
-alias deactivate="source $PYENV_ROOT/versions/miniconda3-latest/bin/deactivate"
-
-# coreutils, findutils
-# * uses for GNU like commands
-# * managed by homebrew
-export PATH=/usr/local/opt/coreutils/libexec/gnubin:${PATH}
-export PATH=/usr/local/opt/findutils/libexec/gnubin:${PATH}
-export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:${MANPATH}
-export MANPATH=/usr/local/opt/findutils/libexec/gnuman:${MANPATH}
-
-# Mac OS Xでpythonのlocationエラーが出るのを防止する
-export LC_ALL=$LANG
-
-# Visual Studio Code
-function vscode () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* }
-
 #---------------------------------------------------------------------------
 # Alias
 #---------------------------------------------------------------------------
 
-alias ls="ls --color=auto -G"
-alias ll='ls -ltr'
-alias la="ls -lhAF --color=auto"
+case "${OSTYPE}" in
+darwin*)
+  alias ls="ls -G"
+  alias ll="ls -lG"
+  alias la="ls -laG"
+  ;;
+linux*)
+  alias ls='ls --color'
+  alias ll='ls -l --color'
+  alias la='ls -la --color'
+  ;;
+esac
+
 alias pd="pushd"
 alias po="popd"
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
@@ -123,7 +109,17 @@ function select-history() {
 }
 
 zle -N select-history
+
+# use emacs key bind
+# for `control + A` or `control + E`
 bindkey -e
 
+# bind `control + r` to history functo
 bindkey '^r' select-history
 
+# run environment-dependent shell like $PATH or .pyenv
+LOCALRC=~/.localrc
+if [ -e $LOCALRC ]
+then
+    sh $LOCALRC
+fi
