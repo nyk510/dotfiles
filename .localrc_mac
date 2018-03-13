@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# pyenv
+#
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+alias activate="source $PYENV_ROOT/versions/miniconda3-latest/bin/activate"
+alias deactivate="source $PYENV_ROOT/versions/miniconda3-latest/bin/deactivate"
+
+# coreutils, findutils
+# * uses for GNU like commands
+# * managed by homebrew
+export PATH=/usr/local/opt/coreutils/libexec/gnubin:${PATH}
+export PATH=/usr/local/opt/findutils/libexec/gnubin:${PATH}
+export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:${MANPATH}
+export MANPATH=/usr/local/opt/findutils/libexec/gnuman:${MANPATH}
+
+# Mac OS Xでpythonのlocationエラーが出るのを防止する
+export LC_ALL=$LANG
