@@ -1,0 +1,33 @@
+#!/bin/sh
+# .git/hooks/prepare-commit-msg に置いて実行権限をつける
+
+# git rev-parse --abbrev-ref HEAD は現在のブランチ名を出力するが、rebase中だとHEADになったりする
+# issue=$(git rev-parse --abbrev-ref HEAD | grep "issue-[0-9]\+" | sed -e 's/^.*issue-//g')
+issue=$(git rev-parse --abbrev-ref HEAD | grep "issue-[0-9]\+" | sed -E -e 's/^.*issue-([0-9]+).*$/\1/g')  
+
+case "$2,$3" in
+  merge,)
+    /usr/bin/perl -i.bak -ne 's/^/# /, s/^# #/#/ if /^Conflicts/ .. /#/; print' "$1"
+    ;;
+
+  message,)
+    if [ "$issue" != "" ]; then
+        # git commit -mのケース
+        # 1行目末尾にissue番号付与
+        sed -i -e "1 s/$/ #$issue/g" $1
+    fi
+    ;;
+
+  template,)
+    if [ "$issue" != "" ]; then
+        # git commit (エディタ起動ケース)
+        # テンプレートの先頭行にissue番号付与
+        mv $1 $1.tmp
+        echo " #$issue" > $1
+        cat $1.tmp >> $1
+    fi
+    ;;
+
+  *)
+    ;;
+esac
