@@ -8,6 +8,7 @@ eval "$(pyenv init -)"
 # rbenv path
 export RBENV_ROOT="$HOME/.rbenv"
 export PATH="$RBENV_ROOT/bin:$PATH"
+sh ./prepare/rbenv.sh
 eval "$(rbenv init -)"
 
 # Path to local node bins
