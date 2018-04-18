@@ -1,5 +1,14 @@
 export LANG=ja_JP.UTF-8
 
+
+# run environment-dependent shell 
+# like .pyenv path and so on :)
+LOCALRC=~/.localrc
+if [ -e $LOCALRC ]
+then
+    source $LOCALRC
+fi
+
 # zplug settings:
 # --------------
 
@@ -116,10 +125,3 @@ bindkey -e
 
 # bind `control + r` to history functo
 bindkey '^r' select-history
-
-# run environment-dependent shell like $PATH or .pyenv
-LOCALRC=~/.localrc
-if [ -e $LOCALRC ]
-then
-    sh $LOCALRC
-fi
