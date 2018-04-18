@@ -1,6 +1,5 @@
 export LANG=ja_JP.UTF-8
 
-
 # run environment-dependent shell 
 # like .pyenv path and so on :)
 LOCALRC=~/.localrc
