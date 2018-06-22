@@ -35,10 +35,12 @@ zplug "chrissicool/zsh-256color"
 zplug "plugins/git", from:oh-my-zsh
 zplug "modules/editor", from:prezto
 zplug "modules/history", from:prezto
+zplug "b4b4r07/emoji-cli"
 
 # インタラクティブフィルタ
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
 zplug "junegunn/fzf", as:command, use:bin/fzf-tmux
+# zplug "peco/peco", as:command, from:gh-r
 
 # Use spaceship prompt: https://github.com/denysdovhan/spaceship-prompt
 zplug "denysdovhan/spaceship-prompt", use:spaceship.zsh, from:github, as:theme
@@ -106,43 +108,25 @@ alias pd="pushd"
 alias po="popd"
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
 alias gip='curl ipcheck.ieserver.net'
-
 alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
-
-zle -N select-history
 
 # use emacs key bind
 # for `control + A` or `control + E`
 bindkey -e
 
+function history-fzf() {
+  local tac
+  if which tac > /dev/null; then
+    tac="tac"
+  else
+    tac="tail -r"
+  fi
 
-peco-select-history()
-{
-    # peco があるかないかで分岐する
-    # なければ違うアプローチをする
-    if type "peco" >/dev/null 2>&1; then
-        BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
-        CURSOR=${#BUFFER}
+  BUFFER=$(history -n 1 | tail -r | awk '!a[$0]++' | fzf --no-sort +m --query "$LBUFFER" --prompt="history > ")
+  CURSOR=$#BUFFER
 
-        # peco で選んでる最中に Enter を押した瞬間実行する
-        zle accept-line
-        # 画面をクリアする
-        zle clear-screen
-    else
-        # バージョンによって条件分岐するために使用するモジュールを開放する
-        autoload -Uz is-at-least
-
-        # 4.3.9 以降ではインクリメンタルパターンサーチが出来るので、それを利用する
-        # なければデフォルトでマッピングされているものを利用する
-        if is-at-least 4.3.9; then
-            # zsh -la <widget> とすることで、widget に完全一致するウィジェットが
-            # 存在する場合、返却値 0 で終了する
-            zle -la history-incremental-pattern-search-backward && bindkey "^r" history-incremental-pattern-search-backward
-        else
-            history-incremental-search-backward
-        fi
-    fi
+  zle reset-prompt
 }
 
-zle -N peco-select-history
-bindkey '^R' peco-select-history
+zle -N history-fzf
+bindkey '^r' history-fzf
