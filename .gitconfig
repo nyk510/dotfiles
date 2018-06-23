@@ -2,7 +2,7 @@
   editor = nano
 
 [user]
-  name = nyker510
+	name = nyker510
   email = takamail53@gmail.com
 
 [init]
@@ -35,9 +35,11 @@
 [push]
   default = current
 
-[difftool "sourcetree"]
-  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-  path = 
+[diff]
+  tool = default-difftool
+
+[difftool "default-difftool"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 
 [mergetool "sourcetree"]
   cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"

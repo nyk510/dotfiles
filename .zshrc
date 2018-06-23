@@ -123,9 +123,6 @@ peco-select-history()
     if type "peco" >/dev/null 2>&1; then
         BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
         CURSOR=${#BUFFER}
-
-        # peco で選んでる最中に Enter を押した瞬間実行する
-        zle accept-line
         # 画面をクリアする
         zle clear-screen
     else
