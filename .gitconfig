@@ -3,7 +3,12 @@
 
 [user]
 	name = nyker510
-	email = takamail53@gmail.com
+  email = takamail53@gmail.com
+
+[init]
+  templatedir = ~/.git_template
+[commit]
+  template = ~/.gitmessage.txt
 
 [alias]
   st = status
@@ -23,19 +28,19 @@
   
 [color]
   ui = true
-	diff = auto
-	status = auto
-	branch = auto
+  diff = auto
+  status = auto
+  branch = auto
 
 [push]
-	default = current
+  default = current
 
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+[diff]
+  tool = default-difftool
+
+[difftool "default-difftool"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 
 [mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-[init]
-	templatedir = /Users/nyker/.git_template
+  cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
