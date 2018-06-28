@@ -14,6 +14,11 @@ fi
 export ZPLUG_HOME=~/.zplug
 source $ZPLUG_HOME/init.zsh
 
+# use emacs key bind
+# for `control + A` or `control + E`
+bindkey -e
+EMOJI_CLI_KEYBIND='^]'
+
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
 # Additional completion definitions for Zsh
@@ -55,7 +60,6 @@ fi
 # zplug の読み込み
 zplug load
 alias gsed='/usr/local/Cellar/gnu-sed/4.2.2/bin/gsed'
-
 
 # zsh settings:
 # -----------------------
@@ -109,10 +113,6 @@ alias po="popd"
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
 alias gip='curl ipcheck.ieserver.net'
 alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
-
-# use emacs key bind
-# for `control + A` or `control + E`
-bindkey -e
 
 function history-fzf() {
   local tac
