@@ -1,21 +1,10 @@
-
-# activate pyenv
-# pyenv must be installed to `~/.pyenv`
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# rbenv path
-export RBENV_ROOT="$HOME/.rbenv"
-export PATH="$RBENV_ROOT/bin:$PATH"
-sh ./prepare/rbenv.sh
-eval "$(rbenv init -)"
-
+#!/bin/bash
 # Path to local node bins
 export PATH=$PATH:./node_modules/.bin
 
-
-export PATH="$PATH:$HOME/.pycharm-community-2017.2.4/bin"
+# pycharm path
+# export PATH="$PATH:$HOME/.pycharm-community-2017.2.4/bin"
+export PATH="$PATH:$HOME/.pycharm-2018.3/bin"
 
 # Path to CUDA and CUDNN
 export PATH=/usr/local/cuda-9.1/bin:${PATH}
