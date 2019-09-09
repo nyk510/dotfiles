@@ -1,5 +1,7 @@
 [core]
   editor = nano
+  autocrlf = input
+  safecrlf = true
 
 [user]
   name = nyker510

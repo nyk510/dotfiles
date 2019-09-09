@@ -99,6 +99,7 @@ linux*)
   alias ls='ls --color'
   alias ll='ls -l --color'
   alias la='ls -la --color'
+  alias pbcopy='xsel --clipboard --input'
   ;;
 esac
 
