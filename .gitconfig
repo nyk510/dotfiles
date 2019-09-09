@@ -1,6 +1,6 @@
 [core]
   editor = nano
-	autocrlf = input
+  autocrlf = input
   safecrlf = true
 
 [user]
