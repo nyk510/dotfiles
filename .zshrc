@@ -99,6 +99,7 @@ linux*)
   alias ls='ls --color'
   alias ll='ls -l --color'
   alias la='ls -la --color'
+  alias pbcopy='xsel --clipboard --input'
   ;;
 esac
 
@@ -142,4 +143,4 @@ peco-select-history()
 }
 
 zle -N peco-select-history
-bindkey '^R' peco-select-history
+bindkey '^r' peco-select-history
