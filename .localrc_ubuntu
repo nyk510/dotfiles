@@ -13,13 +13,11 @@ eval "$(rbenv init -)"
 
 # Path to local node bins
 export PATH=$PATH:./node_modules/.bin
-
-
 export PATH="$PATH:$HOME/.pycharm-community-2017.2.4/bin"
 
 # Path to CUDA and CUDNN
-export PATH=/usr/local/cuda-9.1/bin:${PATH}
-export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64:${LD_LIBRARY_PATH}
+export PATH=/usr/local/cuda/bin:${PATH}
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
 export CUDA_HOME=/usr/local/cuda
 
 export SPACESHIP_TIME_SHOW=true
